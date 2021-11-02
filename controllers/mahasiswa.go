@@ -8,7 +8,6 @@ import (
 )
 
 type MahasiswaInput struct {
-	gorm.Model
 	Nim		string 	`json:"nim"`
 	Nama 	string	`json:"nama"`
 }
@@ -46,6 +45,12 @@ func MahasiswaTambah(c *gin.Context) {
 		return
 	}
 
+	//tambahkan validasi jika jumlah karakter kurang dari 5
+	if len(dataInput.Nama) < 5 {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Nama harus lebih dari 5 karakter"})
+		return
+	}
+
 	//proses input data
 	mhs := models.Mahasiswa{
 		Nim:  dataInput.Nim,
@@ -57,3 +62,47 @@ func MahasiswaTambah(c *gin.Context) {
 	//menampilkan data
 	c.JSON(http.StatusOK, gin.H{"Data":mhs})
 }
+
+func MahasiswaUbah(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	//cek apakah data tersebut ada atau tidak didalam database
+	var mhs models.Mahasiswa
+	if err := db.Where("nim = ?", c.Param("nim")).First(&mhs).Error;
+	err  != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message":"Data tidak ditemukan"})
+		return
+	}
+
+	//validasi inputan
+	var dataInput MahasiswaInput
+	//validasi agar supaya data yand diberikan dalam format json
+	if err := c.ShouldBindJSON(&dataInput);
+		err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		return
+	}
+
+	//proses ubah data
+	db.Model(&mhs).Update(dataInput)
+	//menampilkan data
+	c.JSON(http.StatusOK, gin.H{"Data":mhs})
+}
+
+func MahasiswaHapus(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	//cek apakah data tersebut ada atau tidak didalam database
+	var mhs models.Mahasiswa
+	if err := db.Where("nim = ?", c.Param("nim")).First(&mhs).Error;
+		err  != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message":"Data tidak ditemukan"})
+		return
+	}
+
+	//proses hapus data
+	db.Delete(&mhs)
+	//menampilkan data
+	c.JSON(http.StatusOK, gin.H{"message":"berhasil menghapus data"})
+}
+

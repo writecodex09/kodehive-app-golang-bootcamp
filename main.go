@@ -28,6 +28,10 @@ func main() {
 	r.GET("/mahasiswa", controllers.MahasiswaTampil)
 	//membuat data baru mahasiswa
 	r.POST("/mahasiswa", controllers.MahasiswaTambah)
+	//mengupdate data mahasiswa
+	r.PUT("/mahasiswa/:nim", controllers.MahasiswaUbah)
+	//menghapus data mahasiswa
+	r.DELETE("/mahasiswa/:nim", controllers.MahasiswaHapus)
 	//run server default in port 8080
 	r.Run()
 }
