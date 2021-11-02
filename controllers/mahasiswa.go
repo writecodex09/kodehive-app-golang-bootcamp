@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/writecodex09/kodehive-app-golang-bootcamp/models"
 	"net/http"
+	"time"
 )
 
 type MahasiswaInput struct {
@@ -86,7 +87,7 @@ func MahasiswaUbah(c *gin.Context) {
 	//proses ubah data
 	db.Model(&mhs).Update(dataInput)
 	//menampilkan data
-	c.JSON(http.StatusOK, gin.H{"Data":mhs})
+	c.JSON(http.StatusOK, gin.H{"Data":mhs, "message":"berhasil mengubah data", "time":time.Now()})
 }
 
 func MahasiswaHapus(c *gin.Context) {

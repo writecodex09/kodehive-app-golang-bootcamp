@@ -20,18 +20,23 @@ func main() {
 		c.Next()
 	})
 
-	//first url [ / ]
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"Message":"Restful API Kodehive"})
-	})
-	//get all mahasiswa
-	r.GET("/mahasiswa", controllers.MahasiswaTampil)
-	//membuat data baru mahasiswa
-	r.POST("/mahasiswa", controllers.MahasiswaTambah)
-	//mengupdate data mahasiswa
-	r.PUT("/mahasiswa/:nim", controllers.MahasiswaUbah)
-	//menghapus data mahasiswa
-	r.DELETE("/mahasiswa/:nim", controllers.MahasiswaHapus)
-	//run server default in port 8080
+	//grouping router
+	v1 := r.Group("/api/v1/")
+	{
+		//first url [ / ]
+		v1.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"Message":"Restful API Kodehive"})
+		})
+		//get all mahasiswa
+		v1.GET("/mahasiswa", controllers.MahasiswaTampil)
+		//membuat data baru mahasiswa
+		v1.POST("/mahasiswa", controllers.MahasiswaTambah)
+		//mengupdate data mahasiswa
+		v1.PUT("/mahasiswa/:nim", controllers.MahasiswaUbah)
+		//menghapus data mahasiswa
+		v1.DELETE("/mahasiswa/:nim", controllers.MahasiswaHapus)
+		//run server default in port 8080
+	}
+
 	r.Run()
 }
